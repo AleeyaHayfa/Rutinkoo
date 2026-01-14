@@ -21,6 +21,8 @@
             --inner: #1e232d;
             --accent: #8b5cf6; 
             --accent-dim: #4c1d95;
+            --success: #10b981;
+            --success-dim: #064e3b;
             --text-p: #ffffff;
             --text-s: #94a3b8;
             --border: #2d333f;
@@ -43,7 +45,6 @@
             overflow-x: hidden;
         }
 
-        /* --- CUTE ANIMATIONS --- */
         @keyframes float { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-10px) rotate(1deg); } }
         @keyframes slide { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
@@ -105,6 +106,27 @@
         h2 { margin: 0 0 15px 0; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-s); }
         h2 span { font-size: 0.75rem; font-weight: 400; text-transform: none; color: var(--accent); }
 
+        /* --- TOGGLE SWITCH --- */
+        .switch-container { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; font-size: 0.8rem; color: var(--text-s); }
+        .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--inner); transition: .4s; border-radius: 34px; border: 1px solid var(--border); }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 4px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--accent); }
+        input:checked + .slider:before { transform: translateX(18px); }
+
+        /* --- WORKOUT SUCCESS BOX --- */
+        .success-box {
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            padding: 20px; border-radius: 20px; background: var(--inner);
+            border: 2px solid var(--border); cursor: pointer; margin-bottom: 20px;
+        }
+        .success-box.active { border-color: var(--success); background: var(--success-dim); }
+        .success-box span { font-weight: 800; font-size: 1rem; color: var(--text-s); }
+        .success-box.active span { color: var(--success); }
+        .tick { width: 28px; height: 28px; border-radius: 8px; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: transparent; }
+        .success-box.active .tick { border-color: var(--success); background: var(--success); color: white; }
+
         /* --- CALENDAR --- */
         .grid-7 { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; width: 100%; }
         .weekday { text-align: center; font-size: 0.6rem; color: var(--text-s); font-weight: 800; padding-bottom: 8px; }
@@ -113,29 +135,23 @@
             aspect-ratio: 1 / 1;
             background: var(--inner);
             border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-            font-weight: 700;
-            cursor: pointer;
-            border: 2px solid transparent;
-            position: relative;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.9rem; font-weight: 700; cursor: pointer;
+            border: 2px solid transparent; position: relative;
         }
         .day.has-content { background: var(--accent-dim); color: var(--accent); }
+        .day.workout-win { border-color: var(--success); }
         .day.selected { border: 2.5px solid white; transform: scale(1.1); box-shadow: 0 0 20px var(--accent-dim); }
 
-        /* --- WORKOUT LOGGING UI --- */
+        /* --- WORKOUT EDITOR --- */
         .workout-row { 
             display: grid; grid-template-columns: 1fr 80px 40px; gap: 10px; 
             margin-bottom: 12px; align-items: center; background: var(--inner); 
             padding: 10px; border-radius: 14px;
         }
         .workout-input { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px; color: white; width: 100%; outline: none; font-family: inherit; }
-        .workout-input:focus { border-color: var(--accent); }
 
-        /* --- HOME SUMMARY UI --- */
-        #home-workout-summary { display: none; }
+        /* --- HOME SUMMARY --- */
         .summary-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
         .summary-item:last-child { border: none; }
         .reps-badge { background: var(--accent); color: white; padding: 2px 8px; border-radius: 6px; font-weight: 800; font-size: 0.75rem; }
@@ -143,17 +159,13 @@
         /* --- HABITS --- */
         .habit-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding: 12px; background: var(--inner); border-radius: 16px; }
         .cb { width: 22px; height: 22px; accent-color: var(--accent); cursor: pointer; border-radius: 6px; }
-        .cb:checked { animation: pop 0.4s ease; }
-
         .remove-btn { color: var(--danger); font-size: 1.2rem; cursor: pointer; opacity: 0.5; }
-        .remove-btn:hover { opacity: 1; }
 
-        /* --- OTHERS --- */
+        /* --- ANALYTICS --- */
+        .chart-wrap { height: 180px; width: 100%; }
         .tl-item { border-left: 3px solid var(--accent-dim); padding-left: 18px; margin-bottom: 25px; position: relative; }
         .tl-item::before { content: ''; position: absolute; left: -7.5px; top: 0; width: 12px; height: 12px; background: var(--accent); border-radius: 50%; border: 2px solid var(--bg); }
         
-        .chart-wrap { height: 180px; width: 100%; }
-
         textarea, input[type="text"] {
             width: 100%; background: var(--inner); border: 2px solid var(--border); border-radius: 16px; padding: 14px;
             color: white; font-family: inherit; font-size: 0.95rem; outline: none;
@@ -173,27 +185,32 @@
     <!-- PAGE 1: DAILY DASHBOARD -->
     <div id="dashboard" class="page active">
         <div class="app-grid">
-            
             <div class="col-main">
-                <!-- Note & Habits -->
                 <div class="card">
-                    <h2 id="focus-date-label">Today</h2>
-                    <textarea id="day-note" placeholder="How was your day?" style="height: 100px; margin-bottom: 15px;" oninput="saveData()"></textarea>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <h2 id="focus-date-label" style="margin:0;">Today</h2>
+                        <div class="switch-container">
+                            <span>Workout Summary</span>
+                            <label class="switch">
+                                <input type="checkbox" id="toggle-workout-summary" checked onchange="toggleWorkoutSummaryUI()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <textarea id="day-note" placeholder="Note for today..." style="height: 100px; margin-bottom: 15px;" oninput="saveData()"></textarea>
                     <div id="habit-checklist"></div>
                     <div style="display:flex; gap:10px; margin-top:20px;">
-                        <input type="text" id="new-habit" placeholder="Add habit...">
+                        <input type="text" id="new-habit" placeholder="Add goal...">
                         <button onclick="addHabit()" style="background:var(--accent); border:none; padding:0 22px; border-radius:16px; font-weight:800; cursor:pointer; color: white;">+</button>
                     </div>
                 </div>
 
-                <!-- Workout Summary (Visible if logs exist) -->
                 <div id="home-workout-summary" class="card">
-                    <h2>Training Snapshot <span>Activity for this day</span></h2>
+                    <h2>Training Snapshot <span>Activity logged</span></h2>
                     <div id="summary-list"></div>
                 </div>
             </div>
 
-            <!-- Calendar & Quick Chart -->
             <div style="display: flex; flex-direction: column; gap: 0;">
                 <div class="card">
                     <div style="display:flex; justify-content:space-between; margin-bottom:20px; align-items:center;">
@@ -220,7 +237,13 @@
     <!-- PAGE 2: WORKOUT LOGGING -->
     <div id="workout" class="page">
         <div class="card" style="max-width: 600px; margin: 0 auto;">
-            <h2>Training Log <span>Add your exercises</span></h2>
+            <h2>Training Status</h2>
+            <div class="success-box" id="workout-success-btn" onclick="toggleWorkoutSuccess()">
+                <div class="tick" id="success-tick">✓</div>
+                <span>MARK WORKOUT AS COMPLETE</span>
+            </div>
+
+            <h2 style="margin-top:30px;">Exercise Details</h2>
             <div id="workout-editor"></div>
             <button onclick="addWorkoutRow()" style="width:100%; background:var(--inner); border: 2px dashed var(--border); padding: 15px; border-radius: 15px; color: var(--text-s); font-weight: 700; cursor: pointer; margin-top: 10px;">+ ADD EXERCISE</button>
         </div>
@@ -229,19 +252,23 @@
     <!-- PAGE 3: ANALYTICS -->
     <div id="analytics" class="page">
         <div class="card">
-            <h2>Habit Consistency</h2>
-            <div class="chart-wrap" style="height: 300px;"><canvas id="fullGrowthChart"></canvas></div>
+            <h2>Activity Growth <span>Habits vs Workout</span></h2>
+            <div class="chart-wrap" style="height: 350px;"><canvas id="fullGrowthChart"></canvas></div>
+            <div style="display:flex; gap:20px; margin-top:15px; font-size: 0.8rem; justify-content:center;">
+                <span style="display:flex; align-items:center; gap:5px;"><div style="width:10px; height:10px; background:var(--accent); border-radius:2px;"></div> Habits</span>
+                <span style="display:flex; align-items:center; gap:5px;"><div style="width:10px; height:10px; background:var(--success); border-radius:2px;"></div> Workout Status</span>
+            </div>
         </div>
     </div>
 
     <script>
-        let habits = JSON.parse(localStorage.getItem('rtk_h')) || ['Meditate', 'Read', 'Workout'];
+        let habits = JSON.parse(localStorage.getItem('rtk_h')) || ['Morning Walk', 'Reading', 'Code'];
         let trackerData = JSON.parse(localStorage.getItem('rtk_d')) || {};
+        let settings = JSON.parse(localStorage.getItem('rtk_s')) || { showWorkoutSummary: true };
         let selectedDate = new Date();
         let calContext = new Date();
         let qChart = null, fChart = null;
 
-        /** Fix: Local Time Key */
         function getDK(d) {
             const year = d.getFullYear();
             const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -251,10 +278,11 @@
 
         function saveData() {
             const dk = getDK(selectedDate);
-            if(!trackerData[dk]) trackerData[dk] = { note: '', habits: {}, workouts: [] };
+            if(!trackerData[dk]) trackerData[dk] = { note: '', habits: {}, workouts: [], workoutSuccess: false };
             trackerData[dk].note = document.getElementById('day-note').value;
             localStorage.setItem('rtk_h', JSON.stringify(habits));
             localStorage.setItem('rtk_d', JSON.stringify(trackerData));
+            localStorage.setItem('rtk_s', JSON.stringify(settings));
             renderCalendar();
             renderTimeline();
             updateCharts();
@@ -267,24 +295,39 @@
             document.getElementById(pageId).classList.add('active');
             btn.classList.add('active');
             if(pageId === 'workout') renderWorkoutEditor();
-            if(pageId === 'dashboard') renderHomeWorkoutSummary();
+            if(pageId === 'dashboard') {
+                renderHomeWorkoutSummary();
+                document.getElementById('toggle-workout-summary').checked = settings.showWorkoutSummary;
+            }
             updateCharts();
         }
 
-        /* --- WORKOUT LOGIC --- */
-        function renderWorkoutEditor() {
-            const container = document.getElementById('workout-editor');
+        /* --- WORKOUT SUCCESS --- */
+        function toggleWorkoutSuccess() {
             const dk = getDK(selectedDate);
-            if(!trackerData[dk]) trackerData[dk] = { note: '', habits: {}, workouts: [] };
-            const workouts = trackerData[dk].workouts || [];
+            if(!trackerData[dk]) trackerData[dk] = { note: '', habits: {}, workouts: [], workoutSuccess: false };
+            trackerData[dk].workoutSuccess = !trackerData[dk].workoutSuccess;
+            saveData();
+            renderWorkoutEditor();
+        }
+
+        function renderWorkoutEditor() {
+            const dk = getDK(selectedDate);
+            const successBtn = document.getElementById('workout-success-btn');
+            const workouts = trackerData[dk]?.workouts || [];
             
-            container.innerHTML = workouts.length ? '' : '<p style="text-align:center; color:var(--text-s); padding: 20px;">No workout logged for this date.</p>';
+            // Toggle Success Box Class
+            if(trackerData[dk]?.workoutSuccess) successBtn.classList.add('active');
+            else successBtn.classList.remove('active');
+
+            const container = document.getElementById('workout-editor');
+            container.innerHTML = workouts.length ? '' : '<p style="text-align:center; color:var(--text-s); padding: 20px;">No specific exercises logged.</p>';
             
             workouts.forEach((w, idx) => {
                 const row = document.createElement('div');
                 row.className = 'workout-row';
                 row.innerHTML = `
-                    <input type="text" class="workout-input" placeholder="Exercise name" value="${w.name}" onchange="updateWorkout(${idx}, 'name', this.value)">
+                    <input type="text" class="workout-input" placeholder="Exercise" value="${w.name}" onchange="updateWorkout(${idx}, 'name', this.value)">
                     <input type="number" class="workout-input" placeholder="Reps" value="${w.reps}" onchange="updateWorkout(${idx}, 'reps', this.value)">
                     <span class="remove-btn" onclick="removeWorkout(${idx})">×</span>
                 `;
@@ -294,7 +337,7 @@
 
         function addWorkoutRow() {
             const dk = getDK(selectedDate);
-            if(!trackerData[dk]) trackerData[dk] = { note: '', habits: {}, workouts: [] };
+            if(!trackerData[dk]) trackerData[dk] = { note: '', habits: {}, workouts: [], workoutSuccess: false };
             trackerData[dk].workouts.push({ name: '', reps: '' });
             saveData(); renderWorkoutEditor();
         }
@@ -309,14 +352,19 @@
             saveData(); renderWorkoutEditor();
         }
 
-        /* --- HOME SUMMARY LOGIC --- */
+        /* --- HOME SUMMARY SETTINGS --- */
+        function toggleWorkoutSummaryUI() {
+            settings.showWorkoutSummary = document.getElementById('toggle-workout-summary').checked;
+            saveData();
+        }
+
         function renderHomeWorkoutSummary() {
             const dk = getDK(selectedDate);
             const container = document.getElementById('home-workout-summary');
             const list = document.getElementById('summary-list');
             const workouts = trackerData[dk]?.workouts || [];
 
-            if(workouts.length > 0 && workouts.some(w => w.name)) {
+            if(settings.showWorkoutSummary && workouts.length > 0 && workouts.some(w => w.name)) {
                 container.style.display = 'block';
                 list.innerHTML = '';
                 workouts.forEach(w => {
@@ -329,7 +377,7 @@
             }
         }
 
-        /* --- DASHBOARD LOGIC --- */
+        /* --- DASHBOARD & ANALYTICS --- */
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid'); grid.innerHTML = '';
             const m = calContext.getMonth(), y = calContext.getFullYear();
@@ -343,8 +391,8 @@
                 const el = document.createElement('div');
                 el.className = 'day'; el.textContent = d;
                 const hDone = Object.values(trackerData[dk]?.habits || {}).filter(v => v).length;
-                const wDone = trackerData[dk]?.workouts?.length || 0;
-                if(hDone > 0 || wDone > 0 || trackerData[dk]?.note) el.classList.add('has-content');
+                if(hDone > 0 || trackerData[dk]?.note) el.classList.add('has-content');
+                if(trackerData[dk]?.workoutSuccess) el.classList.add('workout-win');
                 if(dk === getDK(selectedDate)) el.classList.add('selected');
                 el.onclick = () => { selectedDate = new Date(date); renderFocusDay(); renderCalendar(); renderHomeWorkoutSummary(); if(document.getElementById('workout').classList.contains('active')) renderWorkoutEditor(); };
                 grid.appendChild(el);
@@ -367,7 +415,7 @@
 
         function toggleH(h) {
             const dk = getDK(selectedDate);
-            if(!trackerData[dk]) trackerData[dk] = { note: '', habits: {}, workouts: [] };
+            if(!trackerData[dk]) trackerData[dk] = { note: '', habits: {}, workouts: [], workoutSuccess: false };
             if(!trackerData[dk].habits) trackerData[dk].habits = {};
             trackerData[dk].habits[h] = !trackerData[dk].habits[h];
             saveData();
@@ -382,23 +430,26 @@
             for(let i=0; i<15; i++) {
                 const d = new Date(); d.setDate(today.getDate() - i);
                 const dk = getDK(d);
-                if(trackerData[dk] && (trackerData[dk].note || Object.values(trackerData[dk].habits || {}).some(v=>v) || trackerData[dk].workouts?.length > 0)) {
+                if(trackerData[dk] && (trackerData[dk].note || Object.values(trackerData[dk].habits || {}).some(v=>v) || trackerData[dk].workoutSuccess)) {
                     const hDone = Object.values(trackerData[dk].habits || {}).filter(v=>v).length;
                     tl.innerHTML += `<div class="tl-item">
                         <small style="color:var(--accent); font-weight:800;">${d.toLocaleDateString(undefined, {month:'short', day:'numeric'})}</small>
-                        <p style="font-size:0.85rem; margin:5px 0;">${trackerData[dk].note || '<i>Silence is golden.</i>'}</p>
-                        <small style="color:var(--text-s)">✦ ${hDone} habits • ${trackerData[dk].workouts?.length || 0} exercises</small>
+                        <p style="font-size:0.85rem; margin:5px 0;">${trackerData[dk].note || '<i>Entry logged.</i>'}</p>
+                        <small style="color:var(--text-s)">✦ ${hDone} habits • ${trackerData[dk].workoutSuccess ? 'Workout OK' : 'No workout'}</small>
                     </div>`;
                 }
             }
         }
 
         function updateCharts() {
-            const labels = [], hData = [];
+            const labels = [], hData = [], wData = [];
             for(let i=13; i>=0; i--) {
                 const d = new Date(); d.setDate(d.getDate() - i);
+                const dk = getDK(d);
                 labels.push(d.toLocaleDateString(undefined, {month:'short', day:'numeric'}));
-                hData.push(Object.values(trackerData[getDK(d)]?.habits || {}).filter(v => v).length);
+                hData.push(Object.values(trackerData[dk]?.habits || {}).filter(v => v).length);
+                // Binary success data (scale it for chart visibility)
+                wData.push(trackerData[dk]?.workoutSuccess ? habits.length || 1 : 0);
             }
 
             if(qChart) qChart.destroy();
@@ -410,8 +461,36 @@
             if(document.getElementById('analytics').classList.contains('active')) {
                 if(fChart) fChart.destroy();
                 fChart = new Chart(document.getElementById('fullGrowthChart'), {
-                    type: 'line', data: { labels, datasets: [{ data: hData, borderColor: '#8b5cf6', fill: true, tension: 0.3 }] },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#2d333f' }, ticks: { color: '#94a3b8' } }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } } }
+                    type: 'line', 
+                    data: { 
+                        labels, 
+                        datasets: [
+                            { 
+                                label: 'Habits',
+                                data: hData, 
+                                borderColor: '#8b5cf6', 
+                                backgroundColor: 'rgba(139, 92, 246, 0.1)', 
+                                fill: true, tension: 0.3 
+                            },
+                            { 
+                                label: 'Workout Status',
+                                data: wData, 
+                                borderColor: '#10b981', 
+                                borderDash: [5, 5],
+                                tension: 0,
+                                pointRadius: 4,
+                                fill: false
+                            }
+                        ] 
+                    },
+                    options: { 
+                        responsive: true, maintainAspectRatio: false, 
+                        plugins: { legend: { display: false } }, 
+                        scales: { 
+                            y: { beginAtZero: true, grid: { color: '#2d333f' }, ticks: { color: '#94a3b8' } }, 
+                            x: { grid: { display: false }, ticks: { color: '#94a3b8' } } 
+                        } 
+                    }
                 });
             }
         }
