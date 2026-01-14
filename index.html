@@ -2,10 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Essential for Mobile / PWA -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <!-- iOS / Safari PWA Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Rutinkoo">
+    
+    <!-- Android / Chrome PWA Tags -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0b0e14">
+
     <title>Rutinkoo</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <style>
         :root {
             --bg: #0b0e14;
@@ -26,7 +38,8 @@
             background-color: var(--bg);
             color: var(--text-p);
             margin: 0;
-            padding: 0;
+            /* Added Safe Area Padding for iPhone/iPad PWA mode */
+            padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom) 0;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -61,7 +74,8 @@
         /* --- NAVIGATION --- */
         nav {
             position: fixed;
-            bottom: 25px;
+            /* Fixed padding for bottom safe area */
+            bottom: calc(25px + env(safe-area-inset-bottom));
             background: rgba(21, 25, 33, 0.95);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -146,29 +160,19 @@
         .remove-btn { color: var(--danger); font-size: 1.2rem; cursor: pointer; opacity: 0.4; }
         .remove-btn:hover { opacity: 1; transform: scale(1.2); }
 
-        .cb { 
-            width: 24px; height: 24px; accent-color: var(--accent); 
-            cursor: pointer; border-radius: 8px;
-        }
+        .cb { width: 24px; height: 24px; accent-color: var(--accent); cursor: pointer; border-radius: 8px; }
         .cb:checked { animation: pop 0.4s ease; }
 
-        /* --- INPUTS --- */
         textarea, input[type="text"] {
             width: 100%; background: var(--inner); border: 2px solid var(--border); border-radius: 16px; padding: 14px;
             color: white; font-family: inherit; font-size: 0.95rem; outline: none;
         }
         textarea:focus, input:focus { border-color: var(--accent); background: #1a1f29; }
 
-        /* --- CHARTS --- */
-        .chart-wrap-home { height: 160px; width: 100%; }
-        .chart-wrap-detail { height: 350px; width: 100%; margin-top: 20px; }
-
-        /* --- TIMELINE --- */
         .timeline { max-height: 400px; overflow-y: auto; padding-right: 8px; }
         .tl-item { border-left: 3px solid var(--accent-dim); padding-left: 18px; margin-bottom: 25px; position: relative; }
         .tl-item::before { content: ''; position: absolute; left: -7px; top: 0; width: 12px; height: 12px; background: var(--accent); border-radius: 50%; border: 2px solid var(--bg); }
         
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
     </style>
@@ -253,10 +257,7 @@
         let calContext = new Date();
         let quickChart = null, detailChart = null;
 
-        /** 
-         * FIX: Date Key Generation (Local Time)
-         * Using local string prevents UTC from shifting dates back 1 day.
-         */
+        // Fix: Local Time Key
         function getDK(d) {
             const year = d.getFullYear();
             const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -305,11 +306,7 @@
                 if(habitsDone > 0 || trackerData[dk]?.note) el.classList.add('has-content');
                 if(dk === getDK(selectedDate)) el.classList.add('selected');
 
-                el.onclick = () => { 
-                    selectedDate = new Date(date); 
-                    renderFocusDay(); 
-                    renderCalendar(); 
-                };
+                el.onclick = () => { selectedDate = new Date(date); renderFocusDay(); renderCalendar(); };
                 grid.appendChild(el);
             }
         }
@@ -355,7 +352,6 @@
 
         function renderTimeline() {
             const tl = document.getElementById('timeline'); tl.innerHTML = '';
-            // Display last 10 days in descending order
             for(let i=0; i<10; i++) {
                 const d = new Date(); d.setDate(d.getDate() - i);
                 const dk = getDK(d);
@@ -363,8 +359,8 @@
                     const hDone = Object.values(trackerData[dk].habits || {}).filter(v=>v).length;
                     tl.innerHTML += `<div class="tl-item">
                         <small style="color:var(--accent); font-weight:800;">${d.toLocaleDateString(undefined, {month:'short', day:'numeric', weekday:'short'})}</small><br>
-                        <span style="font-size:0.85rem; line-height:1.4; display:block; margin: 4px 0;">${trackerData[dk].note || '<i>Silence is golden.</i>'}</span>
-                        <div style="font-size: 0.7rem; color: var(--text-s);">✦ ${hDone}/${habits.length} habits done</div>
+                        <span style="font-size:0.85rem; line-height:1.4; display:block; margin: 4px 0;">${trackerData[dk].note || '<i>Reflection logged.</i>'}</span>
+                        <div style="font-size: 0.7rem; color: var(--text-s);">✦ ${hDone}/${habits.length} goals</div>
                     </div>`;
                 }
             }
