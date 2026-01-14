@@ -3,421 +3,455 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rutinkoo — Clear Aesthetic Habit Tracker</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Rutinkoo — Premium Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Improved Contrast Palette */
-            --bg: #16161e; /* Deeper background for better contrast */
-            --surface: #1f2335; 
-            --surface-light: #292e42;
-            --accent-purple: #c0caf5; /* Brighter lavender */
-            --accent-teal: #73daca; 
-            --accent-pink: #ff757f; 
-            --text-main: #ffffff; /* Pure white for maximum clarity */
-            --text-secondary: #a9b1d6; /* Brighter secondary text */
-            --border-radius: 20px;
-            --soft-shadow: 8px 8px 0px #000000;
+            --bg: #000000;
+            --card-bg: #1c1c1e;
+            --input-bg: #2c2c2e;
+            --text-main: #ffffff;
+            --text-dim: #8e8e93;
+            --accent: #ffffff;
+            
+            /* Grade Colors */
+            --color-aplus: #4cd964;
+            --color-a: #34c759;
+            --color-b: #8bc34a;
+            --color-c: #ffcc00;
+            --color-d: #ff9500;
+            --color-f: #ff3b30;
         }
 
-        * { box-sizing: border-box; transition: all 0.2s ease; }
-
         body {
-            font-family: 'Nunito', sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--bg);
             color: var(--text-main);
             margin: 0;
-            padding: 20px;
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* --- NAVIGATION --- */
-        nav {
-            background: var(--surface);
-            padding: 10px;
-            border-radius: 50px;
+        /* --- TOP NAV --- */
+        .year-nav {
             display: flex;
-            gap: 10px;
-            box-shadow: var(--soft-shadow);
-            margin-bottom: 40px;
-            position: sticky;
-            top: 20px;
-            z-index: 100;
-            border: 2px solid var(--accent-purple);
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            padding: 20px 0;
+            width: 100%;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        .nav-arrow {
+            cursor: pointer;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 1.5rem;
         }
 
-        .nav-btn {
-            padding: 12px 24px;
-            border-radius: 40px;
-            cursor: pointer;
-            font-family: 'Fredoka', sans-serif;
-            font-weight: 600;
-            color: var(--text-secondary);
+        .container {
+            width: 100%;
+            max-width: 450px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* --- TODAY CARD --- */
+        .card {
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-header h2 { margin: 0; font-size: 1.1rem; }
+        .card-header span { color: var(--text-dim); font-size: 0.9rem; }
+
+        .grade-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .grade-circle {
+            width: 45px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            background: #2c2c2e;
+            color: var(--text-dim);
+            opacity: 0.4;
+            transition: 0.2s;
+        }
+        .grade-circle.active { opacity: 1; color: #000; }
+
+        .note-area {
+            background: var(--input-bg);
+            border-radius: 12px;
+            padding: 15px;
+            width: 100%;
+            border: none;
+            color: var(--text-main);
+            font-family: inherit;
+            resize: none;
+            min-height: 80px;
+            outline: none;
+        }
+
+        /* --- TOGGLE --- */
+        .view-toggle {
+            display: flex;
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 4px;
+            width: fit-content;
+            align-self: center;
+        }
+
+        .toggle-btn {
+            padding: 8px 25px;
+            border-radius: 8px;
             border: none;
             background: transparent;
-            font-size: 1rem;
+            color: var(--text-dim);
+            font-weight: 500;
+            cursor: pointer;
         }
-
-        .nav-btn.active { 
-            background: var(--accent-purple); 
-            color: var(--bg); 
-        }
-
-        /* --- HEADER --- */
-        header { text-align: center; margin-bottom: 30px; }
-        .logo { font-family: 'Fredoka', sans-serif; font-size: 3.5rem; margin: 0; color: var(--accent-teal); text-shadow: 2px 2px 0px #000; }
-        #live-clock { color: var(--accent-purple); font-weight: bold; font-size: 1rem; margin-top: 5px; }
-
-        /* --- PAGES --- */
-        .page { display: none; width: 100%; max-width: 1000px; animation: fadeIn 0.4s ease; }
-        .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .glass-panel {
-            background: var(--surface);
-            border-radius: var(--border-radius);
-            padding: 30px;
-            box-shadow: var(--soft-shadow);
-            border: 2px solid #292e42;
-            margin-bottom: 30px;
-        }
-
-        h2 { font-family: 'Fredoka', sans-serif; margin-top: 0; color: var(--accent-teal); font-size: 2rem; }
-
-        /* --- CONTROLS --- */
-        .controls { display: flex; gap: 12px; margin-bottom: 25px; flex-wrap: wrap; align-items: center; }
-        input, select, .btn-base {
-            background: var(--bg);
-            border: 2px solid var(--surface-light);
+        .toggle-btn.active {
+            background: var(--input-bg);
             color: var(--text-main);
-            padding: 12px 18px;
-            border-radius: 12px;
-            font-family: 'Fredoka', sans-serif;
-            font-size: 1rem;
         }
-        input:focus { border-color: var(--accent-teal); outline: none; }
-        
-        .btn-action { 
-            cursor: pointer; 
-            background: var(--accent-purple); 
-            color: var(--bg); 
-            font-weight: 800;
-            border: 2px solid #000;
-            box-shadow: 4px 4px 0px #000;
+
+        /* --- CALENDAR --- */
+        .calendar-title {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            font-weight: 600;
         }
-        .btn-action:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #000; }
-        .btn-action:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0px #000; }
 
-        .delete-btn { 
-            color: var(--accent-pink); 
-            background: rgba(255, 117, 127, 0.1);
-            padding: 4px 10px; 
-            font-size: 0.9rem; 
-            cursor: pointer; 
-            border-radius: 8px; 
-            border: 1px solid var(--accent-pink); 
-            margin-left: 8px;
-            font-weight: bold;
+        .day-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
         }
-        .delete-btn:hover { background: var(--accent-pink); color: var(--bg); }
 
-        /* --- TABLE READABILITY --- */
-        .table-wrap { overflow-x: auto; border-radius: 15px; }
-        table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
-        th { color: var(--accent-purple); font-weight: 600; padding: 15px; font-size: 1.1rem; border-bottom: 2px solid var(--surface-light); }
-        td { background: var(--surface-light); padding: 18px; text-align: center; border-top: 1px solid #414868; border-bottom: 1px solid #414868; color: var(--text-main); font-weight: 600; }
-        td:first-child { border-radius: 15px 0 0 15px; border-left: 1px solid #414868; text-align: left; }
-        td:last-child { border-radius: 0 15px 15px 0; border-right: 1px solid #414868; }
-
-        /* Custom Checkbox */
-        .habit-check {
-            appearance: none; width: 26px; height: 26px; background: var(--bg);
-            border: 2px solid var(--accent-teal); border-radius: 8px; cursor: pointer; position: relative;
+        .weekday {
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            padding-bottom: 10px;
         }
-        .habit-check:checked { background: var(--accent-teal); }
-        .habit-check:checked::after { content: 'L'; transform: scaleX(-1) rotate(-35deg); color: var(--bg); position: absolute; left: 6px; top: 2px; font-weight: 900; font-size: 1.2rem; }
 
-        /* --- ANALYTICS --- */
-        .chart-container { height: 350px; background: rgba(0,0,0,0.2); border-radius: 20px; padding: 20px; margin-top: 20px; border: 1px solid var(--surface-light); }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: var(--surface-light); padding: 20px; border-radius: 18px; text-align: center; border: 2px solid var(--accent-purple); box-shadow: 4px 4px 0px #000; }
-        .stat-card b { color: var(--accent-teal); font-size: 1.2rem; }
-
-        /* --- NOTEBOOK --- */
-        .note-row { background: var(--surface-light); padding: 25px; border-radius: 20px; margin-bottom: 25px; border: 1px solid #414868; }
-        .reflection-preview {
-            background: var(--bg);
-            border-left: 5px solid var(--accent-teal);
-            padding: 15px;
-            margin: 15px 0;
+        .day-box {
+            aspect-ratio: 1;
+            background: var(--input-bg);
             border-radius: 8px;
-            font-style: italic;
-            color: var(--accent-purple);
-            font-size: 1.1rem;
-            line-height: 1.4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            cursor: pointer;
+            position: relative;
         }
-        .date-badge { background: var(--accent-pink); color: var(--bg); padding: 4px 12px; border-radius: 8px; font-weight: 800; font-family: 'Fredoka'; }
-        .note-input-full { width: 100%; margin-top: 15px; background: var(--surface); border: 2px solid var(--accent-teal); font-size: 1.1rem; }
+
+        .day-box.current { border: 2px solid #fff; }
+        .day-box.future { color: var(--text-dim); opacity: 0.5; }
+
+        .day-dot {
+            width: 3px;
+            height: 3px;
+            background: var(--text-dim);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 6px;
+        }
+
+        /* --- HABIT MANAGER --- */
+        .habit-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .habit-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--input-bg);
+            padding: 12px;
+            border-radius: 10px;
+        }
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--color-a);
+        }
+
+        .delete-icon { color: var(--color-f); cursor: pointer; font-weight: bold; }
 
     </style>
 </head>
 <body>
 
-    <header>
-        <h1 class="logo">Rutinkoo</h1>
-        <div id="live-clock">---</div>
-    </header>
-
-    <nav>
-        <button class="nav-btn active" onclick="showPage('log')">Daily Goals</button>
-        <button class="nav-btn" onclick="showPage('dashboard')">Growth Charts</button>
-        <button class="nav-btn" onclick="showPage('notes')">Notebook</button>
-    </nav>
-
-    <!-- PAGE: TRACKER -->
-    <div id="log" class="page active">
-        <div class="glass-panel">
-            <div class="controls">
-                <button class="btn-action" onclick="changeDate(-1)">PREV</button>
-                <span id="date-label" style="min-width: 150px; text-align: center; font-weight: 800; font-size: 1.2rem;"></span>
-                <button class="btn-action" onclick="changeDate(1)">NEXT</button>
-                
-                <select id="view-select" onchange="renderTable()" style="margin-left: auto;">
-                    <option value="week">Weekly View</option>
-                    <option value="month">Monthly View</option>
-                </select>
-                
-                <input type="text" id="new-habit-name" placeholder="Type a new goal...">
-                <button class="btn-action" onclick="addHabit()">ADD GOAL</button>
-            </div>
-            
-            <div class="table-wrap">
-                <table>
-                    <thead><tr id="header-row"></tr></thead>
-                    <tbody id="table-body"></tbody>
-                </table>
-            </div>
-        </div>
+    <div class="year-nav">
+        <span class="nav-arrow" onclick="changeYear(-1)">‹</span>
+        <span id="display-year">2026</span>
+        <span class="nav-arrow" onclick="changeYear(1)">›</span>
     </div>
 
-    <!-- PAGE: ANALYTICS -->
-    <div id="dashboard" class="page">
-        <div class="glass-panel">
-            <h2>Activity Analytics</h2>
-            <div class="stats-grid" id="stats-container"></div>
+    <div class="container">
+        
+        <!-- Today Section -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Today</h2>
+                <span id="display-full-date">Wednesday, Jan 14</span>
+            </div>
             
-            <div class="chart-container">
-                <canvas id="progressChart"></canvas>
+            <div class="grade-row" id="grade-row">
+                <div class="grade-circle" id="g-aplus" style="background: var(--color-aplus);">A+</div>
+                <div class="grade-circle" id="g-a" style="background: var(--color-a);">A</div>
+                <div class="grade-circle" id="g-b" style="background: var(--color-b);">B</div>
+                <div class="grade-circle" id="g-c" style="background: var(--color-c);">C</div>
+                <div class="grade-circle" id="g-d" style="background: var(--color-d);">D</div>
+                <div class="grade-circle" id="g-f" style="background: var(--color-f);">F</div>
+            </div>
+
+            <textarea class="note-area" id="note-input" placeholder="Add a note about your day..." oninput="updateNote(this.value)"></textarea>
+            
+            <div class="habit-list" id="habit-checklist">
+                <!-- Habits for today show here -->
+            </div>
+            
+            <div style="margin-top: 15px; display: flex; gap: 10px;">
+                <input type="text" id="new-habit" placeholder="New Goal..." style="flex:1; background: var(--input-bg); border:none; padding:10px; border-radius:8px; color:#fff;">
+                <button onclick="addHabit()" style="background: #fff; border:none; border-radius:8px; padding:0 15px; font-weight:600;">Add</button>
             </div>
         </div>
-    </div>
 
-    <!-- PAGE: NOTEBOOK -->
-    <div id="notes" class="page">
-        <div class="glass-panel">
-            <h2>Daily Reflections</h2>
-            <div id="notes-list"></div>
+        <!-- View Toggle -->
+        <div class="view-toggle">
+            <button class="toggle-btn active">Month</button>
+            <button class="toggle-btn" onclick="alert('Analytics page is being upgraded to match this style!')">Year</button>
+        </div>
+
+        <!-- Calendar Section -->
+        <div class="card">
+            <div class="calendar-title">
+                <span class="nav-arrow" onclick="changeMonth(-1)">‹</span>
+                <span id="calendar-month-year">January 2026</span>
+                <span class="nav-arrow" onclick="changeMonth(1)">›</span>
+            </div>
+            
+            <div class="day-grid" id="weekday-headers">
+                <div class="weekday">MON</div><div class="weekday">TUE</div><div class="weekday">WED</div>
+                <div class="weekday">THU</div><div class="weekday">FRI</div><div class="weekday">SAT</div>
+                <div class="weekday">SUN</div>
+            </div>
+            
+            <div class="day-grid" id="calendar-grid">
+                <!-- Grid Days Generated by JS -->
+            </div>
         </div>
     </div>
 
     <script>
-        // DATA STORAGE
-        let habits = JSON.parse(localStorage.getItem('rutinkoo_v2_habits')) || ['Exercise', 'Deep Work', 'Reading'];
-        let trackerData = JSON.parse(localStorage.getItem('rutinkoo_v2_data')) || {};
-        let currentDate = new Date();
-        let myChart = null;
+        let habits = JSON.parse(localStorage.getItem('rutinkoo_habits')) || ['Exercise', 'Reading'];
+        let trackerData = JSON.parse(localStorage.getItem('rutinkoo_data')) || {};
+        let viewDate = new Date(); // The date currently being viewed/edited
+        let calendarDate = new Date(); // The month shown in the calendar
 
         function saveData() {
-            localStorage.setItem('rutinkoo_v2_habits', JSON.stringify(habits));
-            localStorage.setItem('rutinkoo_v2_data', JSON.stringify(trackerData));
+            localStorage.setItem('rutinkoo_habits', JSON.stringify(habits));
+            localStorage.setItem('rutinkoo_data', JSON.stringify(trackerData));
         }
 
-        // CLOCK
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('live-clock').textContent = now.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' }) + " | " + now.toLocaleTimeString();
+        function formatDateKey(date) {
+            return date.toISOString().split('T')[0];
         }
-        setInterval(updateClock, 1000); updateClock();
 
-        // PAGE NAVIGATION
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            event.target.classList.add('active');
+        // --- CALENDAR LOGIC ---
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = '';
             
-            if(pageId === 'dashboard') initAnalytics();
-            if(pageId === 'notes') renderNotesPage();
-        }
+            const month = calendarDate.getMonth();
+            const year = calendarDate.getFullYear();
+            
+            document.getElementById('calendar-month-year').textContent = 
+                calendarDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+            document.getElementById('display-year').textContent = year;
 
-        // HABIT MANAGEMENT
-        function addHabit() {
-            const val = document.getElementById('new-habit-name').value.trim();
-            if(val && !habits.includes(val)) {
-                habits.push(val);
-                document.getElementById('new-habit-name').value = '';
-                saveData(); renderTable();
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            // Adjust for Monday start
+            let startPadding = firstDay === 0 ? 6 : firstDay - 1;
+
+            // Empty boxes for padding
+            for (let i = 0; i < startPadding; i++) {
+                grid.appendChild(document.createElement('div'));
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month, day);
+                const dk = formatDateKey(date);
+                const box = document.createElement('div');
+                box.className = 'day-box';
+                box.textContent = day;
+
+                // Coloring based on completion
+                const score = calculateDayScore(dk);
+                if (score !== null) {
+                    box.style.background = getGradeColor(score);
+                    box.style.color = '#000';
+                    box.style.fontWeight = '700';
+                }
+
+                if (dk === formatDateKey(new Date())) box.classList.add('current');
+                if (date > new Date()) box.classList.add('future');
+
+                // Check if has notes
+                if (trackerData[dk]?.note) {
+                    const dot = document.createElement('div');
+                    dot.className = 'day-dot';
+                    box.appendChild(dot);
+                }
+
+                box.onclick = () => {
+                    viewDate = new Date(date);
+                    renderDayView();
+                };
+                grid.appendChild(box);
             }
         }
 
-        function removeHabit(habitName) {
-            if(confirm(`Delete goal: "${habitName}"?`)) {
-                habits = habits.filter(h => h !== habitName);
-                saveData(); renderTable();
-            }
+        function calculateDayScore(dk) {
+            if (!trackerData[dk]) return null;
+            const dayHabits = habits.filter(h => trackerData[dk][h] === true);
+            if (habits.length === 0) return null;
+            return (dayHabits.length / habits.length) * 100;
         }
 
-        // TRACKER TABLE
-        function formatDateKey(date) { return date.toISOString().split('T')[0]; }
+        function getGradeColor(percent) {
+            if (percent >= 100) return 'var(--color-aplus)';
+            if (percent >= 80) return 'var(--color-a)';
+            if (percent >= 60) return 'var(--color-b)';
+            if (percent >= 40) return 'var(--color-c)';
+            if (percent >= 20) return 'var(--color-d)';
+            return 'var(--color-f)';
+        }
 
-        function renderTable() {
-            const view = document.getElementById('view-select').value;
-            const start = new Date(currentDate);
-            if(view === 'week') start.setDate(start.getDate() - start.getDay() + (start.getDay() === 0 ? -6 : 1));
-            else start.setDate(1);
+        // --- DAY VIEW LOGIC ---
+        function renderDayView() {
+            const dk = formatDateKey(viewDate);
+            document.getElementById('display-full-date').textContent = 
+                viewDate.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
+            
+            // Note
+            document.getElementById('note-input').value = trackerData[dk]?.note || '';
 
-            const days = view === 'week' ? 7 : new Date(start.getFullYear(), start.getMonth() + 1, 0).getDate();
-            document.getElementById('date-label').textContent = view === 'week' ? `Week of ${start.getMonth()+1}/${start.getDate()}` : start.toLocaleString('default', { month: 'long', year: 'numeric' });
-
-            const header = document.getElementById('header-row');
-            header.innerHTML = '<th>Date</th>';
+            // Habits
+            const list = document.getElementById('habit-checklist');
+            list.innerHTML = '';
             habits.forEach(h => {
-                header.innerHTML += `<th>${h} <span class="delete-btn" onclick="removeHabit('${h}')">×</span></th>`;
+                const item = document.createElement('div');
+                item.className = 'habit-item';
+                const isChecked = trackerData[dk]?.[h] ? 'checked' : '';
+                item.innerHTML = `
+                    <span>${h}</span>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <input type="checkbox" class="checkbox" ${isChecked} onchange="toggleHabit('${dk}', '${h}')">
+                        <span class="delete-icon" onclick="removeHabit('${h}')">×</span>
+                    </div>
+                `;
+                list.appendChild(item);
             });
 
-            const body = document.getElementById('table-body');
-            body.innerHTML = '';
-            for(let i=0; i<days; i++){
-                const d = new Date(start); d.setDate(start.getDate() + i);
-                const dk = formatDateKey(d);
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td><b>${d.toLocaleDateString(undefined, {weekday:'short'})}</b>, ${d.getDate()}</td>`;
-                habits.forEach(h => {
-                    const checked = trackerData[dk] && trackerData[dk][h] ? 'checked' : '';
-                    const td = document.createElement('td');
-                    td.innerHTML = `<input type="checkbox" class="habit-check" ${checked} onchange="toggleHabit('${dk}', '${h}')">`;
-                    tr.appendChild(td);
-                });
-                body.appendChild(tr);
-            }
+            updateGradeDisplay(calculateDayScore(dk));
+        }
+
+        function updateGradeDisplay(score) {
+            document.querySelectorAll('.grade-circle').forEach(c => c.classList.remove('active'));
+            if (score === null) return;
+            
+            let id = 'g-f';
+            if (score >= 100) id = 'g-aplus';
+            else if (score >= 80) id = 'g-a';
+            else if (score >= 60) id = 'g-b';
+            else if (score >= 40) id = 'g-c';
+            else if (score >= 20) id = 'g-d';
+            
+            document.getElementById(id).classList.add('active');
         }
 
         function toggleHabit(dk, h) {
-            if(!trackerData[dk]) trackerData[dk] = {};
+            if (!trackerData[dk]) trackerData[dk] = {};
             trackerData[dk][h] = !trackerData[dk][h];
             saveData();
+            renderDayView();
+            renderCalendar();
         }
 
-        function changeDate(offset) {
-            const view = document.getElementById('view-select').value;
-            if (view === 'week') currentDate.setDate(currentDate.getDate() + (offset * 7));
-            else currentDate.setMonth(currentDate.getMonth() + offset);
-            renderTable();
-        }
-
-        // ANALYTICS & CHART
-        function initAnalytics() {
-            const container = document.getElementById('stats-container');
-            container.innerHTML = '';
-            
-            habits.forEach(h => {
-                let completed = 0;
-                for(let i=0; i<7; i++) {
-                    const d = new Date(); d.setDate(d.getDate() - i);
-                    if(trackerData[formatDateKey(d)]?.[h]) completed++;
-                }
-                container.innerHTML += `<div class="stat-card"><b>${h}</b><br>${completed} / 7 Days Complete</div>`;
-            });
-
-            const labels = [];
-            const dataPoints = [];
-            for(let i=9; i>=0; i--) {
-                const d = new Date(); d.setDate(d.getDate() - i);
-                const dk = formatDateKey(d);
-                labels.push(d.toLocaleDateString(undefined, {month:'short', day:'numeric'}));
-                let count = 0;
-                if(trackerData[dk]) habits.forEach(h => { if(trackerData[dk][h]) count++; });
-                dataPoints.push(count);
-            }
-
-            if(myChart) myChart.destroy();
-            const ctx = document.getElementById('progressChart').getContext('2d');
-            myChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Goals Met',
-                        data: dataPoints,
-                        borderColor: '#73daca',
-                        backgroundColor: 'rgba(115, 218, 202, 0.2)',
-                        fill: true,
-                        tension: 0.3,
-                        borderWidth: 4,
-                        pointRadius: 6,
-                        pointBackgroundColor: '#ff757f'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { 
-                            beginAtZero: true, 
-                            max: habits.length, 
-                            ticks: { color: '#a9b1d6', stepSize: 1 },
-                            grid: { color: 'rgba(255,255,255,0.05)' }
-                        },
-                        x: { 
-                            ticks: { color: '#a9b1d6' },
-                            grid: { display: false }
-                        }
-                    },
-                    plugins: { legend: { labels: { color: '#ffffff', font: { size: 14 } } } }
-                }
-            });
-        }
-
-        // NOTEBOOK
-        function renderNotesPage() {
-            const list = document.getElementById('notes-list');
-            list.innerHTML = '';
-            const today = new Date();
-            for(let i=0; i<7; i++) {
-                const d = new Date(); d.setDate(today.getDate() - i);
-                const dk = formatDateKey(d);
-                const val = trackerData[dk]?.note || '';
-                
-                // Early Sentence logic
-                const firstPeriod = val.indexOf('.');
-                const earlySentence = val ? (firstPeriod !== -1 ? val.substring(0, firstPeriod + 1) : val) : "No entry for today yet.";
-
-                const row = document.createElement('div');
-                row.className = 'note-row';
-                row.innerHTML = `
-                    <div><span class="date-badge">${d.toLocaleDateString(undefined, {month:'long', day:'numeric', weekday:'short'})}</span></div>
-                    <div class="reflection-preview">Snapshot: "${earlySentence}"</div>
-                    <input type="text" class="note-input-full" 
-                           value="${val}" placeholder="Share your thoughts for today..." 
-                           onchange="updateNote('${dk}', this.value)">
-                `;
-                list.appendChild(row);
-            }
-        }
-
-        function updateNote(dk, val) {
-            if(!trackerData[dk]) trackerData[dk] = {};
+        function updateNote(val) {
+            const dk = formatDateKey(viewDate);
+            if (!trackerData[dk]) trackerData[dk] = {};
             trackerData[dk].note = val;
             saveData();
-            renderNotesPage(); 
+            renderCalendar();
         }
 
-        // INITIALIZE
-        renderTable();
+        function addHabit() {
+            const val = document.getElementById('new-habit').value.trim();
+            if (val) {
+                habits.push(val);
+                document.getElementById('new-habit').value = '';
+                saveData();
+                renderDayView();
+                renderCalendar();
+            }
+        }
+
+        function removeHabit(h) {
+            habits = habits.filter(item => item !== h);
+            saveData();
+            renderDayView();
+            renderCalendar();
+        }
+
+        function changeMonth(offset) {
+            calendarDate.setMonth(calendarDate.getMonth() + offset);
+            renderCalendar();
+        }
+
+        function changeYear(offset) {
+            calendarDate.setFullYear(calendarDate.getFullYear() + offset);
+            renderCalendar();
+        }
+
+        // Init
+        renderCalendar();
+        renderDayView();
     </script>
 </body>
 </html>
